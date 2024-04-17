@@ -4,7 +4,8 @@ import React, { createContext } from "react";
 const WeatherContext = createContext<WeatherContextType>({
   onAddCity: (city) => {},
   cityData: {},
-  loading: "",
+  city: "",
+  loading: true,
   setError: "",
   temp: 0,
   country: "",
@@ -16,6 +17,9 @@ const WeatherContext = createContext<WeatherContextType>({
   temp_max: 0,
   temp_min: 0,
   dt: 0,
+  speed: 0,
+  humidity: 0,
+  feels_like: 0,
 });
 
 export default WeatherContext;

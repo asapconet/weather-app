@@ -1,16 +1,16 @@
 //TODO fetching data
-const fetchWeatherdata = (city) => {
+const fetchWeatherData = (city: string) => {
   return fetch(
     `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=460add583d60f7ac623bc126ffcd2205`
   ).then((res) => {
     if (!res.ok) {
-      throw Error("wahala dey guy");
+      throw Error("something went wrong");
     }
     return res.json();
   });
 };
 
-const formatcollectedData = (data) => {
+const formatCollectedData = (data: object | any) => {
   const {
     main: {
       temp,
@@ -57,15 +57,14 @@ const formatcollectedData = (data) => {
   };
 };
 
-const fetchFomattedData = async (city) => {
+const fetchFormattedData = async (city: string) => {
   try {
-    const data = await fetchWeatherdata(city);
-    const formattedData = formatcollectedData(data);
+    const data = await fetchWeatherData(city);
+    const formattedData = formatCollectedData(data);
     return formattedData;
   } catch (error) {
     throw Error("still error");
   }
- 
 };
 
-export default fetchFomattedData;
+export default fetchFormattedData;
