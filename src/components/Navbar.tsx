@@ -3,7 +3,6 @@ import { BsSearch } from "react-icons/bs";
 import { IoGrid } from "react-icons/io5";
 import WeatherContext from "./context/ContextApi";
 import { WeatherContextType } from "@/types/contextTypes";
-import ApInput from "./Input";
 import DebouncedInput from "./DebouncedInput";
 import { useRecoilState } from "recoil";
 import { searchResultsState, recentCitiesState } from "../atoms/searchState";
@@ -69,30 +68,20 @@ export const Navbar = () => {
           type="text"
           value={searchQuery}
           onChange={(value) => {
-            setSearchQuery(value.toString()); // Convert value to string before setting state
-            handleSearch(value.toString()); // Perform search
+            setSearchQuery(value.toString()); 
+            handleSearch(value.toString()); 
           }}
           placeholder="Search cities..."
           className="bg-transparent border border-gray-300 px-4 py-2 w-full h-8 rounded-md"
         />
-        {searchQuery !== "" && searchResults.length > 0 && (
-          <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-20 overflow-hidden">
-            <ul>
-              {searchResults.map((city, index) => (
-                <li
-                  key={index}
-                  onClick={() => handleSelectCity(city)}
-                  className="px-4 py-2 text-left cursor-pointer hover:bg-gray-100 hover:text-gray-600"
-                >
-                  {!city ? error : city}
-                </li>
-              ))}
-            </ul>
+
+        {searchQuery !== "" && searchResults.length === 0 ? (
+          <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-16 px-4 py-2">
+            no city found
           </div>
-        )}
-        {/* <p className="font-semibold text-lg">Recently Searched Cities</p> */}
-        {searchQuery === "" && recentCities.length > 0 && (
-          <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-20 overflow-hidden">
+        ) : null}
+        {searchQuery === "" && recentCities.length > 0 ? (
+          <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-16 overflow-hidden">
             <ul>
               {recentCities.map((city, index) => (
                 <li
@@ -105,7 +94,22 @@ export const Navbar = () => {
               ))}
             </ul>
           </div>
-        )}
+        ) : null}
+        {searchQuery !== "" && searchResults.length > 0 ? (
+          <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-16 overflow-hidden">
+            <ul>
+              {searchResults.map((city, index) => (
+                <li
+                  key={index}
+                  onClick={() => handleSelectCity(city)}
+                  className="px-4 py-2 text-left cursor-pointer hover:bg-gray-100 hover:text-gray-600"
+                >
+                  {city}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
       </div>
 
       <span>
