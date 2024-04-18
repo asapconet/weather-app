@@ -14,7 +14,9 @@ interface IProps {
   type?: string;
   placeholder?: string;
   className?: string;
-  onChange: () => void;
+  onChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }
 
 const ApInput = ({
@@ -28,7 +30,6 @@ const ApInput = ({
   className,
   ...rest
 }: IProps) => {
-  
   const icons: any = {
     search: <BsSearch />,
   };

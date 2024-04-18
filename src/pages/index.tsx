@@ -15,48 +15,37 @@ import { weatherIcons } from "../components/formattedIcons";
 function WeatherMain() {
   const weatherContext = useContext<WeatherContextType>(WeatherContext);
   const {
-    temp,
     country,
     description: weatherType,
-    icon,
-    name,
-    sunrise,
-    sunset,
-    temp_max,
-    temp_min,
-    dt,
-    humidity,
-    feels_like,
-    speed,
+    ...rest
   } = weatherContext?.cityData || {};
 
-  const high = Math.round(temp_max - 273);
-  const low = Math.round(temp_min - 300);
-  const temps = Math.round(temp - 273);
-  const feel = Math.round(feels_like - 273);
+  const high = Math.round(rest.temp_max - 273);
+  const low = Math.round(rest.temp_min - 300);
+  const temps = Math.round(rest.temp - 273);
+  const feel = Math.round(rest.feels_like - 273);
 
   return (
     <MainAppLayout>
       <Navbar />
 
       <div className="flex flex-col gap-2 items-center justify-center mt-12 max-h-[305px]">
-        <p className="font-[600] capitalize">{weatherType}</p>
         <div className="">
-          <img src={`${weatherIcons[icon] || none} `} alt="weather icon" />
+          <img src={`${weatherIcons[rest.icon] || none} `} alt="weather icon" />
         </div>
-
         <motion.h3
           initial={{ y: -800 }}
           animate={{ y: 0 }}
           transition={{ type: "spring", stiffness: 80 }}
         >
-          {`${name ?? "no"} ${country ?? "city found"}`}
+          {`${rest.name ?? "no"} ${country ?? "city found"}`}
         </motion.h3>
         <p className="flex text-[6rem] font-bold p-0">
           {temps}
           <span className="text-[1rem] font-bold mt-6">0</span>
         </p>
-        <p className="">{fullDayFormat(dt)}</p>
+        <p className="font-[600] capitalize">{weatherType}</p>
+        <p className="">{fullDayFormat(rest.dt)}</p>
       </div>
       <div className="flex justify-center mt-12">
         <div
@@ -70,12 +59,12 @@ function WeatherMain() {
           </div>
           <div className="flex flex-col justify-center items-center">
             <IoWater size={22} className="text-blue-400" />
-            <p className="font-[500]">{humidity}%</p>
+            <p className="font-[500]">{rest.humidity}%</p>
             <p className="text-[.8rem] font-[500]">Humidity</p>
           </div>
           <div className="flex flex-col justify-center items-center">
             <BsWind size={22} />
-            <p className="font-[500]">{speed}km/h</p>
+            <p className="font-[500]">{rest.speed}km/h</p>
             <p className="text-[.8rem] font-[500]">Wind Speed</p>
           </div>
         </div>
@@ -114,9 +103,9 @@ function WeatherMain() {
                           <p className="font-[700] text-[.9rem]">{el.city}</p>
                           <p className="font-[700] text-[.7rem]">
                             {el.city === "Sunrise" ? (
-                              <>{timeFormatter(sunrise)} </>
+                              <>{timeFormatter(rest.sunrise)} </>
                             ) : el.city === "Sunset" ? (
-                              <>{timeFormatter(sunset)} </>
+                              <>{timeFormatter(rest.sunset)} </>
                             ) : null}
                           </p>
                         </div>

@@ -49,7 +49,7 @@ const ContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const AddCityFunction = (citySelected: string) => {
     setCurrentCity(citySelected.toString());
   };
-  
+
   const weatherData: Pick<
     WeatherContextType,
     "onAddCity" | "cityData" | "loading" | "city"
