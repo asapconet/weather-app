@@ -8,11 +8,13 @@ interface IProps {
   errors?: string;
   label?: string;
   rightIcon?: string;
-ref?:any;
+  ref?: any;
+  value: any;
   name?: string;
   type?: string;
   placeholder?: string;
   className?: string;
+  onChange: () => void;
 }
 
 const ApInput = ({
@@ -21,6 +23,8 @@ const ApInput = ({
   errors,
   label,
   ref,
+  value,
+  onChange,
   className,
   ...rest
 }: IProps) => {
@@ -28,8 +32,6 @@ const ApInput = ({
   const icons: any = {
     search: <BsSearch />,
   };
-
- 
 
   return (
     <div className="w-full text-left">
@@ -43,8 +45,11 @@ const ApInput = ({
       )}
       <div className="relative w-full my-1">
         <input
-        ref={ref} 
+          ref={ref}
           id={rest.name || ""}
+          type={rest.type}
+          value={value}
+          onChange={onChange}
           className={classNames(
             "outline-none rounded-md h-[2.5rem] w-full px-2 py-2 placeholder:text-[.83rem] border-[1px] border-gray-300",
             className

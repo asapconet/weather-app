@@ -1,54 +1,16 @@
 import React, { useContext } from "react";
-import classes from "@/asset/weatherDetails.module.scss";
 import { WiSunrise, WiSunset, WiDaySunny, WiMoonrise } from "react-icons/wi";
 import { motion } from "framer-motion";
-
-import fewCloudsday from "../assets/WeatherIcons/30.png";
-import fewCloudsNight from "../assets/WeatherIcons/29.png";
-import clearSkyNight from "../assets/WeatherIcons/31.png";
-import clearSkyDay from "../assets/WeatherIcons/32.png";
-import scatteredCloud from "../assets/WeatherIcons/26.png";
-import brokenCloudsNight from "../assets/WeatherIcons/27.png";
-import brokenCloudsDay from "../assets/WeatherIcons/28.png";
-import showerRain from "../assets/WeatherIcons/9.png";
-import rainDay from "../assets/WeatherIcons/39.png";
-import rainNight from "../assets/WeatherIcons/45.png";
-import thunderstormNight from "../assets/WeatherIcons/1.png";
-import thunderstormDay from "../assets/WeatherIcons/38.png";
-import snowDay from "../assets/WeatherIcons/41.png";
-import snowNight from "../assets/WeatherIcons/42.png";
-import mistNight from "../assets/WeatherIcons/21.png";
-import mistDay from "../assets/WeatherIcons/34.png";
-import none from "../assets/WeatherIcons/na.png";
-import { IoPartlySunnySharp, IoUmbrella, IoWater } from "react-icons/io5";
+import none from "../assets/images/na.png";
+import { IoPartlySunnySharp, IoWater } from "react-icons/io5";
 import { BsWind } from "react-icons/bs";
 import { WeatherContextType } from "../types/contextTypes";
 import WeatherContext from "../components/context/ContextApi";
 import { MainAppLayout } from "../layouts/mainApp";
 import { Navbar } from "../components/Navbar";
-import { CloudSunIcon } from "../assets/icons";
 import { daysData7, otherCities } from "../data/forcastData";
-
-const weatherIcons: { [key: string]: string } = {
-  "01d": clearSkyDay,
-  "01n": clearSkyNight,
-  "02d": fewCloudsday,
-  "02n": fewCloudsNight,
-  "03d": scatteredCloud,
-  "03n": scatteredCloud,
-  "04d": brokenCloudsDay,
-  "04n": brokenCloudsNight,
-  "09d": showerRain,
-  "09n": showerRain,
-  "10d": rainDay,
-  "10n": rainNight,
-  "11d": thunderstormDay,
-  "11n": thunderstormNight,
-  "13d": snowDay,
-  "13n": snowNight,
-  "50d": mistDay,
-  "50n": mistNight,
-};
+import { fullDayFormat, timeFormatter } from "../utils/dateTimeFormater";
+import { weatherIcons } from "../components/formattedIcons";
 
 function WeatherMain() {
   const weatherContext = useContext<WeatherContextType>(WeatherContext);
@@ -73,33 +35,10 @@ function WeatherMain() {
   const temps = Math.round(temp - 273);
   const feel = Math.round(feels_like - 273);
 
-  console.log("low:", Math.round(temp_min));
-
-  const fullDayFormat = (secs: number) => {
-    const millisecond = secs * 1000;
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-
-    const format = new Date(millisecond).toLocaleDateString("en-US", options);
-    return format;
-  };
-
-  const timeFormatter = (secs: number) => {
-    const millisecond = secs * 1000;
-    const options: Intl.DateTimeFormatOptions = {
-      minute: "numeric",
-      hour: "numeric",
-    };
-    const format = new Date(millisecond).toLocaleTimeString("en-US", options);
-    return format;
-  };
-
   return (
     <MainAppLayout>
       <Navbar />
+
       <div className="flex flex-col gap-2 items-center justify-center mt-12 max-h-[305px]">
         <p className="font-[600] capitalize">{weatherType}</p>
         <div className="">
@@ -125,7 +64,7 @@ function WeatherMain() {
         rounded bg-white/30 p-2"
         >
           <div className="flex flex-col justify-center items-center">
-            <WiMoonrise size={24} />
+            <WiMoonrise size={32} />
             <p className="font-[500]">{feel}%</p>
             <p className="text-[.8rem] font-[500]">Feels Like</p>
           </div>
