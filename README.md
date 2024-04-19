@@ -1,46 +1,66 @@
-# Getting Started with Create React App
+## Weather Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a weather application built with React.js that allows users to search for weather forecasts for different cities. It provides information such as temperature, weather conditions, humidity, wind speed, and more.
 
-## Available Scripts
+### Features
 
-In the project directory, you can run:
+- Search for weather forecasts for different cities.
+- View current weather conditions including temperature, weather type, and more.
+- Toggle between Celsius and Fahrenheit temperature units.
+- View additional weather information such as humidity, wind speed, and feels like temperature.
 
-### `yarn start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Technologies Used
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- React.js: A JavaScript library for building user interfaces.
+- Recoil: A state management library for React applications.
+- Framer Motion: A library for creating animations in React applications.
+- Tailwind CSS: A utility-first CSS framework for styling web applications.
 
-### `yarn test`
+### API Manager
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The application uses the following APIs to fetch weather data:
+- OpenWeatherMap API: Used to retrieve current weather data and forecast information for cities.
 
-### `yarn build`
+### Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   git clone https://github.com/asapconet/weather-app.git
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Navigate into the project directory:
 
-### `yarn eject`
+   ```bash
+   cd weather-app
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+3. Install dependencies:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```bash
+   npm install
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+4. Start the development server:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+   ```bash
+   npm start
+   ```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Usage
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Enter the name of a city in the search bar and press Enter or click the search icon.
+2. View the current weather conditions for the selected city.
+3. Toggle between Celsius and Fahrenheit temperature units by clicking on the temperature unit indicator.
+4. View additional weather information such as humidity, wind speed, and feels like temperature.
+
+### Contributors
+
+- [Aaron Sunday](https://github.com/asapconet)
+
+### License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
