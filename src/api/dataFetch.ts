@@ -1,70 +1,41 @@
-//TODO fetching data
-const fetchWeatherData = (city: string) => {
-  return fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=460add583d60f7ac623bc126ffcd2205`
-  ).then((res) => {
-    if (!res.ok) {
-      throw Error("something went wrong");
-    }
-    return res.json();
-  });
-};
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
-const formatCollectedData = (data: object | any) => {
-  const {
-    main: {
-      temp,
-      temp_min,
-      temp_max,
-      feels_like,
-      sea_level,
-      grnd_level: ground_level,
-      pressure,
-      humidity,
-    },
-    weather,
-    visibility,
-    dt,
-    sys: { country, sunrise, sunset },
-    timezone,
-    name,
-    wind: { speed, deg },
-  } = data;
+const API_URL = process.env.REACT_APP_API_URL;
+const CITY_API_URL = process.env.REACT_APP_API_CITY;
 
-  const { main, description, icon } = weather?.[0];
-
-  return {
-    ground_level,
-    sea_level,
-    temp,
-    feels_like,
-    pressure,
-    humidity,
-    visibility,
-    dt,
-    country,
-    sunrise,
-    sunset,
-    timezone,
-    name,
-    main,
-    description,
-    icon,
-    temp_max,
-    temp_min,
-    speed,
-    deg,
-  };
-};
-
-const fetchFormattedData = async (city: string) => {
+const fetchWeatherData = async (city: string) => {
   try {
-    const data = await fetchWeatherData(city);
-    const formattedData = formatCollectedData(data);
-    return formattedData;
+    const response = await axios.get(`${API_URL}&q=${city}`);
+
+    return response.data;
   } catch (error) {
-    throw Error("still error");
+    console.error("Error fetching weather data:", error);
+    throw error;
   }
 };
 
-export default fetchFormattedData;
+const fetchCityData = async (city: string) => {
+  try {
+    const response = await axios.get(`${CITY_API_URL}&q=${city}`);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching city data:", error);
+    throw error;
+  }
+};
+
+export const useFetchWeather = (city: string) => {
+  return useQuery({
+    queryKey: ["weather", city],
+    queryFn: () => fetchWeatherData(city),
+  });
+};
+
+export const useFetchCities = (city: string) => {
+  return useQuery({
+    queryKey: ["cities", city],
+    queryFn: () => fetchCityData(city),
+  });
+};

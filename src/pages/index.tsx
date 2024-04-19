@@ -1,29 +1,37 @@
-import React, { useContext } from "react";
+import React from "react";
 import { WiSunrise, WiSunset, WiDaySunny, WiMoonrise } from "react-icons/wi";
 import { motion } from "framer-motion";
 import none from "../assets/images/na.png";
 import { IoPartlySunnySharp, IoWater } from "react-icons/io5";
 import { BsWind } from "react-icons/bs";
-import { WeatherContextType } from "../types/contextTypes";
-import WeatherContext from "../components/context/ContextApi";
 import { MainAppLayout } from "../layouts/mainApp";
 import { Navbar } from "../components/Navbar";
 import { daysData7, otherCities } from "../data/forcastData";
-import { fullDayFormat, timeFormatter } from "../utils/dateTimeFormater";
 import { weatherIcons } from "../components/formattedIcons";
+import { convertTemperature } from "../utils/tempretureConverter";
+import { useFetchWeather } from "../api/dataFetch";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { cityToSearchState } from "../atoms/searchState";
+import { isDegree } from "../atoms/metricState";
+import { formatCollectedData } from "../data/formattedCityData";
+import { fullDayFormat, timeFormatter } from "../utils/dateTimeFormater";
 
 function WeatherMain() {
-  const weatherContext = useContext<WeatherContextType>(WeatherContext);
+  const [selectedMetric, setSelectedMetric] = useRecoilState(isDegree);
+  const [selectedCity, setSelectedCity] = useRecoilState(cityToSearchState);
+
+  const { data, isLoading, isError } = useFetchWeather(selectedCity || "abuja");
+
   const {
     country,
     description: weatherType,
     ...rest
-  } = weatherContext?.cityData || {};
+  } = formatCollectedData(data ? data : {});
 
-  const high = Math.round(rest.temp_max - 273);
-  const low = Math.round(rest.temp_min - 300);
-  const temps = Math.round(rest.temp - 273);
-  const feel = Math.round(rest.feels_like - 273);
+  const high = convertTemperature(rest.temp_max, selectedMetric);
+  const low = convertTemperature(rest.temp_min, selectedMetric);
+  const temps = convertTemperature(rest.temp, selectedMetric);
+  const feel = convertTemperature(rest.feels_like, selectedMetric);
 
   return (
     <MainAppLayout>
@@ -38,14 +46,20 @@ function WeatherMain() {
           animate={{ y: 0 }}
           transition={{ type: "spring", stiffness: 80 }}
         >
-          {`${rest.name ?? "no"} ${country ?? "city found"}`}
+          {isLoading ? (
+            <span>finding city...</span>
+          ) : (
+            `${rest.name ?? "no"} ${country ?? "city found"}`
+          )}
         </motion.h3>
         <p className="flex text-[6rem] font-bold p-0">
-          {temps}
+          {isLoading ? <span>00</span> : temps}
           <span className="text-[1rem] font-bold mt-6">0</span>
         </p>
         <p className="font-[600] capitalize">{weatherType}</p>
-        <p className="">{fullDayFormat(rest.dt)}</p>
+        <p className="">
+          {isLoading ? <span>--/--/--</span> : fullDayFormat(rest.dt)}
+        </p>
       </div>
       <div className="flex justify-center mt-12">
         <div
@@ -75,7 +89,7 @@ function WeatherMain() {
           animate={{ x: 0 }}
           transition={{ type: "spring", stiffness: 80 }}
         >
-          <div className="flex justify-start">
+          <div className="flex justify-start sm:justify-center">
             <div className="min-w-[398px] w-full ">
               <div className="">
                 <div className="flex justify-between items-center mb-2 mt-6">
@@ -138,7 +152,8 @@ function WeatherMain() {
               <p className="text-[.8rem] font-[700]">Today</p>
               <p className="text-[.8rem] font-[700]">7-Day Forecasts</p>
             </div>
-            <div className="flex gap-2">
+
+            <div className="flex gap-2 sm:justify-center">
               {daysData7.map((el, idx) => (
                 <div
                   key={idx}

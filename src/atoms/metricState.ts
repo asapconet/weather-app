@@ -1,6 +1,8 @@
 import { atom } from "recoil";
+import { persistAtomEffect } from "./config";
 
 export const isDegree = atom({
   key: "isDegree",
-  default: true,
+  default: "C",
+  effects_UNSTABLE: [persistAtomEffect],
 });

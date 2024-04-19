@@ -4,7 +4,7 @@ import { persistAtomEffect } from "./config";
 export const recentCitiesState = atom<string[]>({
   key: "recentCitiesState",
   default: [],
-   effects_UNSTABLE: [persistAtomEffect],
+  effects_UNSTABLE: [persistAtomEffect],
 });
 
 export const searchResultsState = atom<string[]>({
@@ -12,3 +12,7 @@ export const searchResultsState = atom<string[]>({
   default: [],
 });
 
+export const cityToSearchState = atom<string>({
+  key: "cityToSearchState",
+  default: "",
+});

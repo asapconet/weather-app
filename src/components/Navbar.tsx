@@ -1,20 +1,26 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BsSearch } from "react-icons/bs";
-import { IoGrid } from "react-icons/io5";
-import WeatherContext from "./context/ContextApi";
-import { WeatherContextType } from "@/types/contextTypes";
-import DebouncedInput from "./DebouncedInput";
+import { motion } from "framer-motion";
 import { useRecoilState } from "recoil";
-import { searchResultsState, recentCitiesState } from "../atoms/searchState";
+import {
+  searchResultsState,
+  recentCitiesState,
+  cityToSearchState,
+} from "../atoms/searchState";
+import DebouncedInput from "./DebouncedInput";
+import { useFetchCities } from "../api/dataFetch";
+import { isDegree as isDegreeState } from "../atoms/metricState";
 
 export const Navbar = () => {
-  const weatherContext = useContext<WeatherContextType>(WeatherContext);
-  const { cityData } = weatherContext || {};
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
 
-  const [searchResults, setSearchResults] = useRecoilState(searchResultsState);
+  const [isDegree, setIsDegree] = useRecoilState(isDegreeState);
+  const [cityToSearch, setCityToSearch] = useRecoilState(cityToSearchState);
   const [recentCities, setRecentCities] = useRecoilState(recentCitiesState);
+  const [searchResults, setSearchResults] = useRecoilState(searchResultsState);
+
+  const { data: cityData, isLoading, isError } = useFetchCities(searchQuery);
 
   useEffect(() => {
     const savedCities = localStorage.getItem("recentCities");
@@ -24,96 +30,113 @@ export const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (cityData?.name && !recentCities.includes(cityData?.name)) {
-      const updatedCities = [cityData.name, ...recentCities.slice(0, 4)];
-      setRecentCities(updatedCities);
-      localStorage.setItem("recentCities", JSON.stringify(updatedCities));
-    }
-  }, [cityData]);
+    if (cityData && Array.isArray(cityData)) {
+      const results = cityData
+        .filter((city) =>
+          city.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .map((city) => `${city.name}, ${city.country}`);
 
-  const handleSearch = (query: string) => {
-    // Implement your city search logic here
-    // For example, fetch cities from an API or filter from a predefined list
-    // For now, we'll just use a dummy list of cities
-    const cities = ["New York", "London", "Paris", "Tokyo", "Sydney"];
-    const results = cities.filter((city) =>
-      city.toLowerCase().includes(query.toLowerCase())
-    );
-    setSearchResults(results);
-  };
+      setSearchResults(results);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchQuery, cityData, setSearchResults]);
 
   const handleSelectCity = (city: string) => {
     setSearchQuery("");
-    // setSearchResults([]);
+    setSearchResults([]);
 
+    const cityName = city.split(",")[0];
     const updatedRecentCities = [
-      city,
-      ...recentCities.filter((c) => c !== city).slice(0, 4),
+      cityName,
+      ...recentCities.filter((c) => c !== cityName).slice(0, 4),
     ];
     setRecentCities(updatedRecentCities);
-    // You can perform additional actions here, such as fetching weather data for the selected city
-    console.log("Selected city:", city);
+    setCityToSearch(cityName);
   };
 
-  console.log("error:", error);
+  const toggleDegreeUnit = () => {
+    setIsDegree(isDegree === "C" ? "F" : "C");
+  };
+
+  const toggleSearchBarVisibility = () => {
+    setIsSearchVisible(!isSearchVisible);
+  };
 
   return (
     <div className="flex justify-between items-start relative">
-      <span className="bg-white/30 backdrop-opacity-10 rounded p-2">
-        <IoGrid />
+      <span
+        className="bg-white/30 backdrop-opacity-10 rounded p-2"
+        onClick={toggleDegreeUnit}
+      >
+        {isDegree === "C" ? "°C" : "°F"}
       </span>
 
-      <div className="flex flex-col gap-2 items-center justify-center">
-        <DebouncedInput
-          type="text"
-          value={searchQuery}
-          onChange={(value) => {
-            setSearchQuery(value.toString()); 
-            handleSearch(value.toString()); 
-          }}
-          placeholder="Search cities..."
-          className="bg-transparent border border-gray-300 px-4 py-2 w-full h-8 rounded-md"
+      {isSearchVisible && (
+        <motion.div
+          initial={{ x: -800 }}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 80 }}
+        >
+          <div className="flex flex-col gap-2 items-center justify-center ">
+            {/* Search bar */}
+            <DebouncedInput
+              type="text"
+              value={searchQuery}
+              onChange={(value) => setSearchQuery(value)}
+              placeholder="Search cities..."
+              className="bg-transparent border border-gray-300 px-4 py-2 w-full h-8 rounded-md "
+            />
+
+            {/* Search results */}
+            {searchQuery !== "" && searchResults.length === 0 ? (
+              <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-16 px-4 py-2">
+                no city found
+              </div>
+            ) : null}
+            {searchQuery === "" && recentCities.length > 0 ? (
+              <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-16 overflow-hidden">
+                <ul>
+                  {recentCities.map((city, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleSelectCity(city)}
+                      className="px-4 py-2 text-left cursor-pointer hover:bg-gray-100 hover:text-gray-600"
+                    >
+                      {city}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {/* Recently searched  */}
+            {searchQuery !== "" && searchResults.length > 0 ? (
+              <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-16 overflow-hidden">
+                <ul>
+                  {searchResults.map((city, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleSelectCity(city)}
+                      className="px-4 py-2 text-left cursor-pointer hover:bg-gray-100 hover:text-gray-600"
+                    >
+                      {city}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Toggle search bar visibility */}
+      <span className="bg-white/30 backdrop-opacity-10 rounded p-2 cursor-pointer">
+        <BsSearch
+          onClick={toggleSearchBarVisibility}
+          className="cursor-pointer"
         />
-
-        {searchQuery !== "" && searchResults.length === 0 ? (
-          <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-16 px-4 py-2">
-            no city found
-          </div>
-        ) : null}
-        {searchQuery === "" && recentCities.length > 0 ? (
-          <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-16 overflow-hidden">
-            <ul>
-              {recentCities.map((city, index) => (
-                <li
-                  key={index}
-                  onClick={() => handleSelectCity(city)}
-                  className="px-4 py-2 text-left cursor-pointer hover:bg-gray-100 hover:text-gray-600"
-                >
-                  {city}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-        {searchQuery !== "" && searchResults.length > 0 ? (
-          <div className="min-w-[15rem] border border-gray-300 rounded-md absolute top-16 overflow-hidden">
-            <ul>
-              {searchResults.map((city, index) => (
-                <li
-                  key={index}
-                  onClick={() => handleSelectCity(city)}
-                  className="px-4 py-2 text-left cursor-pointer hover:bg-gray-100 hover:text-gray-600"
-                >
-                  {city}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-      </div>
-
-      <span>
-        <BsSearch />
       </span>
     </div>
   );

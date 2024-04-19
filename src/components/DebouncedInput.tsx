@@ -1,4 +1,3 @@
-// DebouncedInput.tsx
 import React, {
   ComponentPropsWithoutRef,
   useEffect,
@@ -9,7 +8,7 @@ import useDebounce from "../hooks/useDebounce";
 import ApInput from "./Input";
 
 type DebouncedInputProps = {
-  onChange: (value: string | number | readonly string[]) => void;
+  onChange: (value: string) => void;
   delay?: number;
 } & Omit<ComponentPropsWithoutRef<typeof ApInput>, "onChange">;
 
@@ -32,7 +31,7 @@ const DebouncedInput = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setInputValue(e.target.value);
-    // Call the onChange prop with the updated value
+
     onChange(e.target.value);
   };
 
